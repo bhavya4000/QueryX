@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine</title>
+    <style>
+        :root {
+            --background-color-dark: #2c2c2c;
+            --text-color-dark: #eaeaea;
+            --input-bg-dark: #3d3d3d;
+            --input-border-dark: #555555;
+            --button-bg-dark: #444444;
+            --button-text-dark: #ffffff;
+            --button-hover-bg-dark: #555555;
+
+            --background-color-light: #f9f9f9;
+            --text-color-light: #333333;
+            --input-bg-light: #ffffff;
+            --input-border-light: #cccccc;
+            --button-bg-light: #eeeeee;
+            --button-text-light: #333333;
+            --button-hover-bg-light: #dddddd;
+        }
+
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color-dark);
+            color: var(--text-color-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: transparent;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-left: 5rem;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 2rem;
+        }
+
+        .theme-toggle label {
+            display: inline-block;
+            width: 50px;
+            height: 25px;
+            background-color: #ccc;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle input {
+            display: none;
+        }
+
+        .theme-toggle label::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2.5px;
+            left: 2.5px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle input:checked + label {
+            background-color: var(--button-bg-dark);
+        }
+
+        .theme-toggle input:checked + label::after {
+            transform: translateX(25px);
+        }
+
+        .main {
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .main h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 70%;
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 1px solid var(--input-border-dark);
+            border-radius: 6px;
+            background-color: var(--input-bg-dark);
+            color: var(--text-color-dark);
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--text-color-dark);
+            background-color: #555555;
+        }
+
+        .search-bar button {
+            padding: 12px 16px;
+            font-size: 16px;
+            background-color: var(--button-bg-dark);
+            color: var(--button-text-dark);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: var(--button-hover-bg-dark);
+            transform: scale(1.05);
+        }
+        /* Container Styling */
+
+#results {
+    display: none; /* Hide by default */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 80%; /* Make it 80% of the screen width */
+    margin-left: auto;
+    margin-right: auto; /* Center horizontally */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Align text properly */
+}
+
+/* Title Styling */
+#results h3 {
+    margin-bottom: 15px;
+    font-size: 1.8em;
+    color: #333;
+    text-align: center;
+}
+
+/* Links Styling */
+#results a {
+    display: block;
+    font-size: 1.2em;
+    color: #007bff;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+#results a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Snippet Styling */
+#results p {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #results {
+        width: 90%; /* Slightly narrower on smaller screens */
+        padding: 15px;
+    }
+
+    #results h3 {
+        font-size: 1.5em;
+    }
+
+    #results a {
+        font-size: 1em;
+    }
+
+    #results p {
+        font-size: 0.95em;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">QueryX</div>
+        <div class="theme-toggle">
+            <input type="checkbox" id="themeSwitch">
+            <label for="themeSwitch"></label>
+        </div>
+    </header>
+    <div class="main">
+        <h1>QueryX</h1>
+        <div class="search-bar">
+            <input id="query" type="text" placeholder="Search QueryX">
+            <button class="btn-search" onclick="search()">Search</button>
+
+        </div>
+    </div>
+    <div class="results" id="results"></div>
+    <script>
+        const themeSwitch = document.getElementById("themeSwitch");
+        const root = document.documentElement;
+
+        themeSwitch.addEventListener("change", () => {
+            if (themeSwitch.checked) {
+                root.style.setProperty("--background-color-dark", "var(--background-color-light)");
+                root.style.setProperty("--text-color-dark", "var(--text-color-light)");
+                root.style.setProperty("--input-bg-dark", "var(--input-bg-light)");
+                root.style.setProperty("--input-border-dark", "var(--input-border-light)");
+                root.style.setProperty("--button-bg-dark", "var(--button-bg-light)");
+                root.style.setProperty("--button-text-dark", "var(--button-text-light)");
+                root.style.setProperty("--button-hover-bg-dark", "var(--button-hover-bg-light)");
+            } else {
+                root.style.setProperty("--background-color-dark", "#2c2c2c");
+                root.style.setProperty("--text-color-dark", "#eaeaea");
+                root.style.setProperty("--input-bg-dark", "#3d3d3d");
+                root.style.setProperty("--input-border-dark", "#555555");
+                root.style.setProperty("--button-bg-dark", "#444444");
+                root.style.setProperty("--button-text-dark", "#ffffff");
+                root.style.setProperty("--button-hover-bg-dark", "#555555");
+            }
+        });
+
+       
+        async function search() {
+    const query = document.getElementById("query").value;
+
+    // Check if query is empty
+    if (!query) {
+        alert('Please enter a search query');
+        return;
+    }
+
+    try {
+        // Fetch search results from your Node.js server
+        const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        // Display the results
+        const resultsDiv = document.getElementById("results");
+
+        if (data.items && data.items.length > 0) {
+            resultsDiv.innerHTML = "<h3>Results:</h3>"; // Clear previous results
+            resultsDiv.style.display = "block"; // Make the results visible
+
+            // Loop through the items in the response and create HTML for each result
+            data.items.forEach(item => {
+                const link = document.createElement("a");
+                link.href = item.link;
+                link.textContent = item.title;
+                link.target = "_blank";
+
+                const snippet = document.createElement("p");
+                snippet.textContent = item.snippet;
+
+                resultsDiv.appendChild(link);
+                resultsDiv.appendChild(snippet);
+            });
+        } else {
+            resultsDiv.innerHTML = "<h3>No Results Found</h3>";
+            resultsDiv.style.display = "block"; // Show the message if no results
+        }
+    } catch (error) {
+        console.error("Error fetching search results:", error);
+        alert('Failed to fetch results.');
+    }
+}
+
+    </script>
+</body>
+</html>
